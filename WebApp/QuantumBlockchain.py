@@ -54,7 +54,7 @@ class QuantumBlockchain:
                 return False
         return True
 
-    def count_primes(self, numbers):
+    def count_primes(self, last_numbers):
         flags = [self.factor_flags(*self.shors_algorithm(num)) for num in last_numbers]
         prime_count = 0
         for f in flags: 
@@ -63,8 +63,7 @@ class QuantumBlockchain:
         return prime_count
 
     def valid_proof(self, transactions, last_numbers, prime_count):
-        actual_prime_count = self.count_primes(last_numbers)
-        return True
+        return prime_count == self.count_primes(last_numbers)
     
     def classical_modular_exponentiation(self, a, power, N):
         """Performs classical modular exponentiation."""
