@@ -55,7 +55,12 @@ class QuantumBlockchain:
         return True
 
     def count_primes(self, numbers):
-        return sum(1 for number in numbers if self.is_prime(number))
+        flags = [self.factor_flags(*self.shors_algorithm(num)) for num in last_numbers]
+        prime_count = 0
+        for f in flags: 
+            if f == "11":
+                prime_count += 1
+        return prime_count
 
     def valid_proof(self, transactions, last_numbers, prime_count):
         actual_prime_count = self.count_primes(last_numbers)
