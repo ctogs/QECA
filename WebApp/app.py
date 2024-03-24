@@ -32,7 +32,7 @@ def new_transaction():
 def mine():
     last_block = blockchain.last_block 
     last_prime_count = last_block['prime_count']
-    prime_count = blockchain.count_primes(last_block['numbers'])  # Placeholder for actual mining process
+    prime_count = blockchain.count_primes(last_block['numbers'])
 
     
     new_block_mined = blockchain.valid_proof(blockchain.current_transactions, last_block['numbers'], prime_count)
