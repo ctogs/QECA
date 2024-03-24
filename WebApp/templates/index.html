@@ -4,10 +4,104 @@
     <title>Quantum Blockchain</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            color: #333;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #0066cc;
+            text-align: center;
+        }
         .block {
-            border: 1px solid black;
-            padding: 10px;
+            border: 2px solid #0066cc;
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 102, 204, 0.2);
+        }
+
+        .block strong {
+            display: block;
+            font-size: 20px;
             margin-bottom: 10px;
+            color: #003366;
+        }
+
+        .block .transactions {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #e6f7ff;
+            border-radius: 5px;
+            border-left: 4px solid #0066cc;
+        }
+
+        .block .transactions .transaction {
+            margin-bottom: 5px;
+        }
+
+        .block .numbers {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #fff0f0;
+            border-radius: 5px;
+            border-left: 4px solid #cc0000;
+        }
+
+        .block .prime-count {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0fff0;
+            border-radius: 5px;
+            border-left: 4px solid #009933;
+        }
+
+        .block .previous-hash {
+            padding: 10px;
+            background-color: #f0f0ff;
+            border-radius: 5px;
+            border-left: 4px solid #000099;
+        }
+
+
+        strong {
+            color: #0066cc;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+            margin-right: 10px;
+        }
+
+        button {
+            background-color: #0066cc;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #factoring-visualization {
+            font-style: italic;
+            color: #666;
+            margin-top: 20px;
+            text-align: center;
         }
     </style>
     <script>
