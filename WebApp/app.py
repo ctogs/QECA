@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, render_template, request
+# from QuantumBlockchain import QuantumBlockchain
 from QuantumBlockchain import QuantumBlockchain
 
 app = Flask(__name__)
@@ -56,4 +57,5 @@ def mine():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    # app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=8000)
