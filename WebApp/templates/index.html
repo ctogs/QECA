@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Quantum Blockchain</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        .block {
+            border: 1px solid black;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script>
+        $(document).ready(function() {
+            var senderName = 'User';
+            var recipientName = 'Miner';
+        
+            function updateChain() {
+                $.getJSON('/chain', function(data) {
+                    $('#chain').empty();
+                    $.each(data.chain, function(index, block) {
+                        var transactionsHtml = '';
+                        $.each(block.transactions, function(i, transaction) {
+                            transactionsHtml += 'Sender: ' + transaction.sender + ', Recipient: ' + transaction.recipient + ', Amount: ' + transaction.amount + '<br>';
+                        });
+                        var blockHtml = '<div class="block">' +
+                            '<strong>Block ' + block.index + '</strong><br>' +
+                            'Transactions:<br>' + transactionsHtml +
+                            'Numbers: ' + block.numbers.join(', ') + '<br>' +
+                            'Prime Count: ' + block.prime_count + '<br>' +
+                            'Previous Hash: ' + block.previous_hash +
+                            '</div>';
+                        $('#chain').append(blockHtml);
+                    });
+                });
+            }
+        
+            $('#sender-name-form').submit(function(event) {
+                event.preventDefault();
+                senderName = $('#sender-name-input').val();
+                $('#sender-name').text(senderName);
+            });
+        
+            $('#recipient-name-form').submit(function(event) {
+                event.preventDefault();
+                recipientName = $('#recipient-name-input').val();
+                $('#recipient-name').text(recipientName);
+            });
+        
+            $('#add-transaction-form').submit(function(event) {
+                event.preventDefault();
+                var transactionData = {
+                    sender: senderName,
+                    recipient: recipientName,
+                    amount: $('#transaction-input').val()
+                };
+                $.post('/transactions/new', JSON.stringify(transactionData), function(response) {
+                    alert(response.message);
+                }, 'json');
+            });
+        
+            $('#mine-button').click(function() {
+                $('#factoring-visualization').text('Factoring in progress...');
+                $.getJSON('/mine', function(data) {
+                    updateChain();
+                    $('#factoring-visualization').text('');
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error mining:', textStatus, errorThrown);
+                    $('#factoring-visualization').text('Error mining block');
+                });
+            });
+        
+            updateChain();
+        });
+        
+    </script>
+</head>
+<body>
+    <h1>Quantum Blockchain</h1>
+    <div id="chain"></div>
+    <form id="sender-name-form">
+        <input type="text" id="sender-name-input" placeholder="Enter sender name">
+        <button type="submit">Set Sender Name</button>
+    </form>
+    <div id="sender-name">Sender: User</div>
+    <form id="recipient-name-form">
+        <input type="text" id="recipient-name-input" placeholder="Enter recipient name">
+        <button type="submit">Set Recipient Name</button>
+    </form>
+    <div id="recipient-name">Recipient: Miner</div>
+    <form id="add-transaction-form">
+        <input type="text" id="transaction-input" maxlength="30" placeholder="Enter transaction amount">
+        <button type="submit">Add a Transaction</button>
+    </form>
+    <button id="mine-button">Mine a Block</button>
+    <div id="factoring-visualization"></div>
+</body>
+</html>
