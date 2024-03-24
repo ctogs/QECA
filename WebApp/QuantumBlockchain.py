@@ -1,7 +1,13 @@
-from qiskit_aer import Aer
 from qiskit import QuantumCircuit, transpile, assemble
+from qiskit.quantum_info import Operator
 import hashlib
 import random
+from qiskit_aer import AerSimulator, Aer
+from qiskit import QuantumCircuit, ClassicalRegister, QuantumRegister, transpile
+from qiskit.quantum_info import Operator
+import math
+import numpy as np
+import fractions
 
 class QuantumBlockchain:
     def __init__(self):
@@ -55,6 +61,88 @@ class QuantumBlockchain:
         actual_prime_count = self.count_primes(last_numbers)
         print(actual_prime_count)
         return actual_prime_count == prime_count
+    
+    def classical_modular_exponentiation(self, a, power, N):
+        """Performs classical modular exponentiation."""
+        return pow(a, int(power), int(N))
+
+    def quantum_order_finding(self, a, N):
+        """Performs the quantum part of the order-finding algorithm."""
+        # Use Qiskit to construct the circuit for quantum order finding
+        # This is a simplified version and might not work for all cases
+        n = math.ceil(math.log2(N))
+        qc = QuantumCircuit(2 * n, n)
+        for q in range(n):
+            qc.h(q)
+        qc.x(n)
+        for q in range(n):
+            qc.append(Operator([[1, 0], [0, np.exp(2 * np.pi * 1j / (2 ** (q + 1)))]], input_dims=(2,)),
+                    [q + n])
+        qc.measure(range(n), range(n))
+        
+        # Transpile the circuit for the AerSimulator
+        simulator = AerSimulator()
+        transpiled_circuit = transpile(qc, simulator)
+        
+        # Execute the transpiled circuit
+        job = simulator.run(transpiled_circuit, shots=1)
+        result = job.result()
+        measurements = list(result.get_counts().keys())[0]
+        phase = int(measurements, 2) / (2 ** n)
+        
+        # Use classical methods to find the order from the phase
+        frac = fractions.Fraction(phase).limit_denominator(N)
+        r = frac.denominator
+        return r
+
+    def shors_algorithm(self, N, max_attempts=100):
+        """Performs Shor's algorithm to factorize N."""
+        if N <= 2:
+            return 1, 0  # Return (1, 0) for numbers less than or equal to 2
+        
+        attempt = 0
+        while attempt < max_attempts:
+            # Step 1: Choose a random number a < N
+            a = np.random.randint(2, N)
+            
+            # Step 2: Compute the greatest common divisor of a and N
+            gcd = math.gcd(a, N)
+            if gcd > 1:
+                # We found a non-trivial factor
+                return gcd, N // gcd
+            
+            # Step 3: Use the quantum algorithm to find the order r of a modulo N
+            r = self.quantum_order_finding(a, N)
+            
+            # Step 4: If r is odd or a^(r/2) is congruent to -1 mod N, go back to step 1
+            if r % 2 != 0 or self.classical_modular_exponentiation(a, r // 2, N) == N - 1:
+                attempt += 1
+                continue
+            
+            # Step 5: Compute the factors of N
+            factor1 = math.gcd(self.classical_modular_exponentiation(a, r // 2, N) + 1, N)
+            factor2 = math.gcd(self.classical_modular_exponentiation(a, r // 2, N) - 1, N)
+            
+            # Check if the factors are non-trivial
+            if factor1 != 1 and factor2 != 1:
+                return factor1, factor2
+            else:
+                attempt += 1
+
+        return 1, 0  # Return (1, 0) if the algorithm fails
+
+    def factor_flags(self, factor1, factor2):
+        """Returns a binary flag based on the primality of the factors."""
+        flag = ""
+        if self.is_prime(factor1):
+            flag += "1"
+        else:
+            flag += "0"
+        if self.is_prime(factor2):
+            flag += "1"
+        else:
+            flag += "0"
+        return flag
 
 # Example usage
 blockchain = QuantumBlockchain()
